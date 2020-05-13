@@ -1,0 +1,41 @@
+{
+  "name": "kaneisha_reese_p1_api",
+  "version": "1.0.0",
+  "description": "Project 1 api",
+  "main": "index.js",
+  "dependencies": {
+    "@types/pg": "^7.14.3",
+    "aws-sdk": "^2.675.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "pg": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.6",
+    "@types/express-session": "^1.17.0",
+    "@types/jest": "^25.2.1",
+    "@types/node": "^14.0.1",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "eslint": "^7.0.0",
+    "jest": "^26.0.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.3",
+    "ts-jest": "^25.5.1",
+    "typescript": "^3.9.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/200406-java-react-usf/kaneisha_reese_p1_api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/200406-java-react-usf/kaneisha_reese_p1_api/issues"
+  },
+  "homepage": "https://github.com/200406-java-react-usf/kaneisha_reese_p1_api#readme"
+}
