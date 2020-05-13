@@ -36,4 +36,20 @@ export class UserRepository implements CrudRepository<User> {
         }
     
     }
+
+    async getById(): Promise<User>{
+        return 
+    }
+
+    async save(): Promise<User> {
+        return 
+    }
+
+    async update(): Promise<boolean> {
+         return
+    }
+
+    async deleteById(): Promise<boolean> {
+        return
+    }
 }
