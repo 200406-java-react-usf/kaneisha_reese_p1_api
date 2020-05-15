@@ -14,16 +14,16 @@ export class UserRepository implements CrudRepository<User> {
 
     baseQuery = `
         select
-            au.id, 
-            au.username, 
-            au.password, 
-            au.first_name,
-            au.last_name,
-            au.email,
-            ur.name as role_name
-        from app_users au
-        join user_roles ur
-        on au.role_id = ur.id
+            eu.ers_user_id, 
+            eu.username, 
+            eu.password, 
+            eu.first_name,
+            eu.last_name,
+            eu.email,
+            ur.role_name as role_name
+        from ers_users eu
+        join ers_user_roles ur
+        on eu.role_id = ur.role_id
     `;
 
     async getAll(): Promise<User[]> {
@@ -49,7 +49,7 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where au.id = $1`;
+            let sql = `${this.baseQuery} where eu.ers_user_id = $1`;
             let rs = await client.query(sql, [id]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
@@ -67,7 +67,7 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where au.${key} = $1`;
+            let sql = `${this.baseQuery} where eu.${key} = $1`;
             let rs = await client.query(sql, [val]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
@@ -85,7 +85,7 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where au.username = $1 and au.password = $2`;
+            let sql = `${this.baseQuery} where eu.username = $1 and eu.password = $2`;
             let rs = await client.query(sql, [un, pw]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
@@ -104,11 +104,11 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
 
             // WIP: hacky fix since we need to make two DB calls
-            let roleId = (await client.query('select id from user_roles where name = $1', [newUser.role])).rows[0].id;
+            let roleId = (await client.query('select role_id from ers_user_roles where role_name = $1', [newUser.role])).rows[0].id;
             
             let sql = `
-                insert into app_users (username, password, first_name, last_name, email, role_id) 
-                values ($1, $2, $3, $4, $5, $6) returning id
+                insert into ers_users (username, password, first_name, last_name, email, role_id) 
+                values ($1, $2, $3, $4, $5, $6) returning ers_user_id
             `;
 
             let rs = await client.query(sql, [newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email, roleId]);
