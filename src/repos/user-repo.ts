@@ -23,7 +23,7 @@ export class UserRepository implements CrudRepository<User> {
             ur.role_name as role_name
         from ers_users eu
         join ers_user_roles ur
-        on eu.role_id = ur.role_id
+        on eu.user_role_id = ur.role_id
     `;
 
     async getAll(): Promise<User[]> {
