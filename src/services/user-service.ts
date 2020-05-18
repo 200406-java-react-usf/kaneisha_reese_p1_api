@@ -98,7 +98,6 @@ export class UserService {
             if (isEmptyObject(authUser)) {
                 throw new AuthenticationError('Bad credentials provided.');
             }
-
             return this.removePassword(authUser);
 
         } catch (e) {
