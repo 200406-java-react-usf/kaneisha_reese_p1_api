@@ -1,5 +1,5 @@
 export class Reimb {
-    id: number;
+    reimb_id: number;
     amount: number;
     submitted: Date;
     resolved: Date;
@@ -9,9 +9,9 @@ export class Reimb {
     reimb_status: string;
     reimb_type: string;
 
-    constructor(id:number, amount:number, submitted: Date, resolved: Date, description: string, 
+    constructor(reimb_id:number, amount:number, submitted: Date, resolved: Date, description: string, 
         author: string, resolver: string, reimb_status: string, reimb_type: string ){
-            this.id = id;
+            this.reimb_id = reimb_id;
             this.amount = amount;
             this.submitted = submitted;
             this.resolved = resolved;
