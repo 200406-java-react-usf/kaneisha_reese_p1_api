@@ -14,7 +14,7 @@ export class UserRepository implements CrudRepository<User> {
 
     baseQuery = `
         select
-            eu.ers_user_id, 
+            eu.user_id, 
             eu.username, 
             eu.password, 
             eu.first_name,
@@ -88,6 +88,7 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery} and eu.username = $1 and eu.password = $2;`;
             let rs = await client.query(sql, [un, pw]);
+            console.log(mapUserResultSet(rs.rows[0]));
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
@@ -100,14 +101,14 @@ export class UserRepository implements CrudRepository<User> {
     async save(newUser: User): Promise<User> {
 
         let client: PoolClient;
-        let role_id: number;
+        let roleId: number;
 
 
         try {
             client = await connectionPool.connect();
 
             // WIP: hacky fix since we need to make two DB calls
-            let roleId = (await client.query('select role_id from ers_user_roles where role_name = $1;', [newUser.role])).rows[0].id;
+            roleId = (await client.query('select role_id from ers_user_roles where role_name = $1;', [newUser.role])).rows[0].id;
             
             let sql = `
                 insert into ers_users (username, password, first_name, last_name, email, role_id) 
@@ -116,7 +117,7 @@ export class UserRepository implements CrudRepository<User> {
 
             let rs = await client.query(sql, [newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email, roleId]);
             
-            newUser.id = rs.rows[0].id;
+            newUser.user_id = rs.rows[0].id;
             
             return newUser;
 
@@ -141,7 +142,7 @@ export class UserRepository implements CrudRepository<User> {
             let sql = `update ers_users eu  set username = $1, "password" = $2,  first_name =$3, last_name =$4, user_role_id =$7 
             where eu.ers_user_id = $8 and eu.ers_email = $6;
             `;
-            let rs = await client.query(sql, [updatedUser.username, updatedUser.password, updatedUser.firstName, updatedUser.lastName, updatedUser.email, roleId, updatedUser.id]);
+            let rs = await client.query(sql, [updatedUser.username, updatedUser.password, updatedUser.firstName, updatedUser.lastName, updatedUser.email, roleId, updatedUser.user_id]);
             return true;
         } catch (e) {
             throw new InternalServerError();
@@ -169,6 +170,6 @@ export class UserRepository implements CrudRepository<User> {
 
     }
 
-    
+
 
 }
