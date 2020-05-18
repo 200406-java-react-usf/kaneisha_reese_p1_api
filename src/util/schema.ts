@@ -7,3 +7,15 @@ export interface UserSchema {
     email: string,
     role_name: string
 }
+
+export interface ReimbSchema {
+    id: number,
+    amount: number,
+    submitted: Date,
+    resolved: Date,
+    description: string,
+    author_id: string,
+    resolver_id: string,
+    reimb_status: string,
+    reimb_type: string
+}
