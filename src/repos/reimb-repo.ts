@@ -7,21 +7,26 @@ import { InternalServerError } from "../errors/errors";
 
 export class ReimbRepository implements CrudRepository<Reimb> {
     baseQuery = `
-        select 
-            er.reimb_id,
-            er.amount,
-            er.submitted,
-            er.resolved,
-            er.description,
-            eu.ers_username as author,
-            eu.ers_username as resolver,
-            rs.reimb_status as reimb_status,
-            rt.reimb_type as reimb_type
-        from ers_reimbursements er
-        join ers_user eu on er.author_id = eu.ers_user_id,
-        join eu on er.resolver_id = eu.ers_user_id,
-        join ers_reimb_statuses rs on er.reimb_status_id = rs.reimb_status_id,
-       
+    select 
+        er.reimb_id,
+        er.amount,
+        er.submitted,
+        er.resolved,
+        er.description,
+        eu.username as author,
+        eu.username as resolver,
+        rs.reimb_status as reimb_status,
+        rt.reimb_type as reimb_type
+    from 
+        ers_reimbursements as er
+    left join 
+        ers_users as eu on er.author_id = eu.user_id
+    left join 
+        ers_users as eu2 on er.resolver_id = eu2.user_id
+    left join 
+        ers_reimb_statuses as rs on er.reimb_status_id = rs.reimb_status_id
+    left join 
+        ers_reimb_types  as rt on er.reimb_type_id = rt.reimb_type_id
 
     `;
 
@@ -40,15 +45,21 @@ export class ReimbRepository implements CrudRepository<Reimb> {
         }
     }
 
-    async getAllByUserId(user_id:number): Promise<Reimb[]> {
+    async getAllByUsername(username :string): Promise<Reimb[]> {
         let client: PoolClient;
+
+        console.log('made it here 5');
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where er.author_id = $1`;
-            let rs = await client.query(sql, [user_id]);
+            let sql = `${this.baseQuery} where er.author_id = (select user_id from ers_users where username = $1)`;
+            let rs = await client.query(sql, [username]);
+            console.log('made it here 6');
+
             return rs.rows.map(mapReimbResultSet);
         } catch (e) {
+            console.log('made it here 7');
+
             throw new InternalServerError();
         } finally {
             client && client.release();
