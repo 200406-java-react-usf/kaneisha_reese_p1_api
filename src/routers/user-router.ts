@@ -14,7 +14,7 @@ UserRouter.get('', adminGuard, async (req, resp) => {
     try {
 
         let reqURL = url.parse(req.url, true);
-
+ 
         if(!isEmptyObject<ParsedUrlQuery>(reqURL.query)) {
             let payload = await userService.getUserByUniqueKey({...reqURL.query});
             resp.status(200).json(payload);
@@ -51,3 +51,23 @@ UserRouter.post('', async (req, resp) => {
     }
 
 });
+
+UserRouter.put('', async (req,resp) => {
+    try{
+        await userService.updateUser(req.body);
+        return resp.status(204);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+});
+
+UserRouter.delete('/:id', async (req,resp) => {
+    try{
+        let id = +req.params.id
+        await userService.deleteById(id);
+        return resp.status(204);
+    }catch (e){
+        return resp.status(e.statusCode).json(e);
+    }
+})
+

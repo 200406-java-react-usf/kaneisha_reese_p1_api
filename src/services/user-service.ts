@@ -33,8 +33,10 @@ export class UserService {
         if (!isValidId(id)) {
             throw new BadRequestError();
         }
-
+        console.log('made it here 3')
         let user = await this.userRepo.getById(id);
+        console.log('made it here 4')
+        console.log(user);
 
         if (isEmptyObject(user)) {
             throw new ResourceNotFoundError();
@@ -156,7 +158,10 @@ export class UserService {
     async deleteById(id: number): Promise<boolean> {
         
         try {
-            throw new NotImplementedError();
+            if (!isValidId(id)) {
+                throw new BadRequestError();
+            }
+            return await this.userRepo.deleteById(id);
         } catch (e) {
             throw e;
         }
