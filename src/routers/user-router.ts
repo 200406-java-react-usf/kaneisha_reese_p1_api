@@ -14,7 +14,7 @@ UserRouter.get('', adminGuard, async (req, resp) => {
     try {
 
         let reqURL = url.parse(req.url, true);
-
+ 
         if(!isEmptyObject<ParsedUrlQuery>(reqURL.query)) {
             let payload = await userService.getUserByUniqueKey({...reqURL.query});
             resp.status(200).json(payload);
@@ -28,3 +28,46 @@ UserRouter.get('', adminGuard, async (req, resp) => {
     }
 
 });
+
+UserRouter.get('/:id', async (req, resp) => {
+    const id = +req.params.id;
+    try {
+        let payload = await userService.getUserById(id);
+        return resp.status(200).json(payload);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+});
+
+UserRouter.post('', async (req, resp) => {
+
+    console.log('POST REQUEST RECEIVED AT /users');
+    console.log(req.body);
+    try {
+        let newUser = await userService.addNewUser(req.body);
+        return resp.status(201).json(newUser);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+
+});
+
+UserRouter.put('', async (req,resp) => {
+    try{
+        await userService.updateUser(req.body);
+        return resp.status(204);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+});
+
+UserRouter.delete('/:id', async (req,resp) => {
+    try{
+        let id = +req.params.id
+        await userService.deleteById(id);
+        return resp.status(204);
+    }catch (e){
+        return resp.status(e.statusCode).json(e);
+    }
+})
+
