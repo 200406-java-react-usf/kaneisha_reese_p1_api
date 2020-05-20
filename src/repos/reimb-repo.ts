@@ -40,6 +40,21 @@ export class ReimbRepository implements CrudRepository<Reimb> {
         }
     }
 
+    async getAllByUserId(user_id:number): Promise<Reimb[]> {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = `${this.baseQuery} where er.author_id = $1`;
+            let rs = await client.query(sql, [user_id]);
+            return rs.rows.map(mapReimbResultSet);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
     async getById(id:number): Promise<Reimb> {
         let client: PoolClient;
 
@@ -70,9 +85,9 @@ export class ReimbRepository implements CrudRepository<Reimb> {
                 values ($1, $2, $3, $4, $5, 1, $6) returning ers_reimb_id
             `;
 
-            let rs = await client.query(sql, [newReimb.id, newReimb.amount, newReimb.submitted, newReimb.description, authorId, reimbStatusId, reimbTypeId ]);
+            let rs = await client.query(sql, [newReimb.reimb_id, newReimb.amount, this.currentTime(), newReimb.description, authorId, reimbStatusId, reimbTypeId ]);
             
-            newReimb.id = rs.rows[0].id;
+            newReimb.reimb_id = rs.rows[0].id;
             
             return newReimb;
 
@@ -92,8 +107,29 @@ export class ReimbRepository implements CrudRepository<Reimb> {
         try {
             client = await connectionPool.connect();
             let sql = `update ers_reimbursements 
-                set reimb_id = $1, amount=$2, submitted=$3, description=$4, author_id = $5, reimb_status_id=$6, reimb_type_id=$7) `;
-            let rs = await client.query(sql, []);
+                set amount=$1, submitted=$2, description=$3,  reimb_type_id=(select reimb_status_id from ers_reimb_types where reimb_type =$4)) `;
+            let rs = await client.query(sql, [updatedReimb.amount, this.currentTime(), updatedReimb.description, updatedReimb.reimb_type ]);
+            return true;
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    
+    }
+
+    async approve(approvedReimb: Reimb): Promise<boolean> {
+        
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            Date.now()
+            let sql = `update ers_reimbursements 
+                set reimb_status_id = (select reimb_status_id from ers_reimb_statuses where reimb_status =$1),
+                set resolver_id = (select user_id from ers_users where username = $2),
+                set  resolved = $3`;
+            let rs = await client.query(sql, [approvedReimb.reimb_status, approvedReimb.resolver, this.currentTime()]);
             return true;
         } catch (e) {
             throw new InternalServerError();
@@ -109,8 +145,8 @@ export class ReimbRepository implements CrudRepository<Reimb> {
 
         try {
             client = await connectionPool.connect();
-            let sql = ``;
-            let rs = await client.query(sql, []);
+            let sql = `delete from ers_reimbursements where reimb_id =$1`;
+            let rs = await client.query(sql, [id]);
             return true;
         } catch (e) {
             throw new InternalServerError();
@@ -118,6 +154,12 @@ export class ReimbRepository implements CrudRepository<Reimb> {
             client && client.release();
         }
 
+    }
+
+    currentTime(){
+        var d = new Date();
+        d = new Date(d.getTime() - 3000000);
+        return d;
     }
 
 }
