@@ -29,13 +29,16 @@ export class UserRepository implements CrudRepository<User> {
 
     async getAll(): Promise<User[]> {
 
+
         let client: PoolClient;
 
+       
         try { 
             client = await connectionPool.connect();
             let sql = `${this.baseQuery}`;
             let rs = await client.query(sql); // rs = ResultSet
             return rs.rows.map(mapUserResultSet);
+            
         } catch (e) {
             throw new InternalServerError();
         } finally {
@@ -45,14 +48,14 @@ export class UserRepository implements CrudRepository<User> {
     }
 
     async getById(id: number): Promise<User> {
-        console.log('made it here 1')
+        
         let client: PoolClient;
 
         try {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery} and eu.user_id = $1`;
             let rs = await client.query(sql, [id]);
-            console.log('made it here 2')
+            
             console.log(mapUserResultSet(rs.rows[0]));
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
