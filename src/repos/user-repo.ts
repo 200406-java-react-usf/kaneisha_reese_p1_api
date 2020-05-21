@@ -105,24 +105,25 @@ export class UserRepository implements CrudRepository<User> {
 
     async save(newUser: User): Promise<User> {
 
+        console.log('made it 7');
         let client: PoolClient;
         let roleId: number;
-
-
         try {
+            
             client = await connectionPool.connect();
-
-            
-            
+            console.log((await client.query('select role_id from ers_user_roles where role_name = $1', [newUser.role])).rows[0])
+            roleId = (await client.query('select role_id from ers_user_roles where role_name = $1', [newUser.role])).rows[0].role_id;
+            console.log('made it 8');
+            console.log(roleId);
             let sql = `
-                insert into ers_users (username, password, first_name, last_name, email) 
-                values ($1, $2, $3, $4, $5) returning user_id;
+                insert into ers_users (username, password, first_name, last_name, email, user_role_id) 
+                values ($1, $2, $3, $4, $5, $6) returning user_id;
             `;
 
-            let rs = await client.query(sql, [newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email]);
+            let rs = await client.query(sql, [newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email, roleId]);
             
             newUser.user_id = rs.rows[0].user_id;
-            
+            console.log('made it 9');
             return newUser;
 
         } catch (e) {

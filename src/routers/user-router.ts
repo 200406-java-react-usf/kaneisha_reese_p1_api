@@ -40,13 +40,14 @@ UserRouter.get('/:id', async (req, resp) => {
 });
 
 UserRouter.post('', async (req, resp) => {
-
-    console.log('POST REQUEST RECEIVED AT /users');
-    console.log(req.body);
     try {
+        console.log('made it 1');
+        
         let newUser = await userService.addNewUser(req.body);
+        console.log('made it 2');
         return resp.status(201).json(newUser);
     } catch (e) {
+        console.log('made it 3');
         return resp.status(e.statusCode).json(e);
     }
 

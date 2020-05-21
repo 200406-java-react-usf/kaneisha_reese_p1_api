@@ -112,6 +112,7 @@ export class UserService {
         
         try {
 
+            console.log('made it 4');
             if (!isValidObject(newUser, 'id')) {
                 throw new BadRequestError('Invalid property values found in provided user.');
             }
@@ -128,9 +129,9 @@ export class UserService {
                 throw new  ResourcePersistenceError('The provided email is already taken.');
             }
 
-            newUser.role = 'User'; // all new registers have 'User' role by default
+            console.log('made it 5');
             const persistedUser = await this.userRepo.save(newUser);
-
+            console.log('made it 6');
             return this.removePassword(persistedUser);
 
         } catch (e) {
