@@ -7,7 +7,7 @@ export const ReimbRouter = express.Router();
 
 const reimbService = AppConfig.reimbService;
 
-ReimbRouter.get('', adminGuard, async (req, resp) =>{
+ReimbRouter.get('',  async (req, resp) =>{
     console.log('made it here 1');
     
     try {
@@ -19,7 +19,7 @@ ReimbRouter.get('', adminGuard, async (req, resp) =>{
     }
 });
 
-ReimbRouter.get('/:id', adminGuard, async (req, resp) => {
+ReimbRouter.get('/:id',  async (req, resp) => {
     const id = +req.params.id;
     try {
         let payload = await reimbService.getReimbById(id);
@@ -29,7 +29,7 @@ ReimbRouter.get('/:id', adminGuard, async (req, resp) => {
     }
 });
 
-ReimbRouter.get('/:username', adminGuard, async (req, resp) => {
+ReimbRouter.get('/:username',  async (req, resp) => {
     const username = req.params.username;
     try {
         let payload = await reimbService.getReimbsByUser(username);
@@ -39,7 +39,7 @@ ReimbRouter.get('/:username', adminGuard, async (req, resp) => {
     }
 });
 
-ReimbRouter.post('', adminGuard, async (req, resp) =>{
+ReimbRouter.post('',  async (req, resp) =>{
     console.log('POST REQUEST RECIEVED AT /reimbs');
     console.log(req.body);
 

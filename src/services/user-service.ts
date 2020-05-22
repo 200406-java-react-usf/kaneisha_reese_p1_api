@@ -109,7 +109,7 @@ export class UserService {
     }
 
     async addNewUser(newUser: User): Promise<User> {
-        
+        console.log(newUser)
         try {
 
             console.log('made it 4');
@@ -162,6 +162,8 @@ export class UserService {
             if (!isValidId(id)) {
                 throw new BadRequestError();
             }
+            console.log(`made it to delete in service id = ${id}`);
+            
             return await this.userRepo.deleteById(id);
         } catch (e) {
             throw e;

@@ -104,14 +104,15 @@ export class UserRepository implements CrudRepository<User> {
     }
 
     async save(newUser: User): Promise<User> {
-
+        console.log(newUser);
+        
         console.log('made it 7');
         let client: PoolClient;
         let roleId: number;
         try {
             
             client = await connectionPool.connect();
-            console.log((await client.query('select role_id from ers_user_roles where role_name = $1', [newUser.role])).rows[0])
+            console.log((await client.query('select role_id from ers_user_roles where role_name = $1', [newUser.role])));
             roleId = (await client.query('select role_id from ers_user_roles where role_name = $1', [newUser.role])).rows[0].role_id;
             console.log('made it 8');
             console.log(roleId);
@@ -163,7 +164,9 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `update ers_users eu set status = false 
+            console.log(`made it to delete in rep id = ${id}`);
+            
+            let sql = `delete from ers_users eu  
             where eu.user_id = $1; `;
             await client.query(sql, [id]);
             return true;

@@ -42,7 +42,7 @@ UserRouter.get('/:id', async (req, resp) => {
 UserRouter.post('', async (req, resp) => {
     try {
         console.log('made it 1');
-        
+        console.log(req.body.username);
         let newUser = await userService.addNewUser(req.body);
         console.log('made it 2');
         return resp.status(201).json(newUser);
@@ -65,6 +65,8 @@ UserRouter.put('', async (req,resp) => {
 UserRouter.delete('/:id', async (req,resp) => {
     try{
         let id = +req.params.id
+        console.log(`delete user where id = ${id}`);
+        
         await userService.deleteById(id);
         return resp.status(204);
     }catch (e){
