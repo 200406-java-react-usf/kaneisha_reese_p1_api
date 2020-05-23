@@ -24,7 +24,7 @@ export class UserService {
             throw new ResourceNotFoundError();
         }
 
-        return users.map(this.removePassword);
+        return users;
 
     }
 
@@ -42,7 +42,7 @@ export class UserService {
             throw new ResourceNotFoundError();
         }
 
-        return this.removePassword(user);
+        return user;
 
     }
 
@@ -77,7 +77,7 @@ export class UserService {
                 throw new ResourceNotFoundError();
             }
 
-            return this.removePassword(user);
+            return user;
 
         } catch (e) {
             throw e;
@@ -100,7 +100,7 @@ export class UserService {
             if (isEmptyObject(authUser)) {
                 throw new AuthenticationError('Bad credentials provided.');
             }
-            return this.removePassword(authUser);
+            return authUser;
 
         } catch (e) {
             throw e;
@@ -132,7 +132,7 @@ export class UserService {
             console.log('made it 5');
             const persistedUser = await this.userRepo.save(newUser);
             console.log('made it 6');
-            return this.removePassword(persistedUser);
+            return persistedUser;
 
         } catch (e) {
             throw e
@@ -141,7 +141,7 @@ export class UserService {
     }
 
     async updateUser(updatedUser: User): Promise<boolean> {
-        
+        console.log('made it to service')
         try {
 
             if (!isValidObject(updatedUser)) {
@@ -198,11 +198,5 @@ export class UserService {
         return false;
     }
 
-    private removePassword(user: User): User {
-        if(!user || !user.password) return user;
-        let usr = {...user};
-        delete usr.password;
-        return usr;   
-    }
 
 }

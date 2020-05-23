@@ -54,8 +54,9 @@ UserRouter.post('', async (req, resp) => {
 });
 
 UserRouter.put('', async (req,resp) => {
+
     try{
-        await userService.updateUser(req.body);
+        await userService.updateUser(req.body.u);
         return resp.status(204);
     } catch (e) {
         return resp.status(e.statusCode).json(e);

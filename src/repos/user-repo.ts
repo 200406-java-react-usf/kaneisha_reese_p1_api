@@ -137,18 +137,18 @@ export class UserRepository implements CrudRepository<User> {
     }
 
     async update(updatedUser: User): Promise<boolean> {
-        
+
         let client: PoolClient;
        
 
         try {
             client = await connectionPool.connect();
-
-            let roleId = (await client.query('select role_id from ers_user_roles where role_name = $1', [updatedUser.role])).rows[0].id;
-            let sql = `update ers_users eu  set username = $1, "password" = $2,  first_name =$3, last_name =$4, user_role_id =$7 
-            where eu.ers_user_id = $8 and eu.ers_email = $6;
+            let roleId = (await client.query('select role_id from ers_user_roles where role_name = $1', [updatedUser.role])).rows[0].role_id;
+            let sql = `update ers_users eu  set first_name = $1, last_name = $2, "password" =$3, email = $4, user_role_id=$5
+            where eu.user_id = $6 ;
             `;
-            let rs = await client.query(sql, [updatedUser.username, updatedUser.password, updatedUser.firstName, updatedUser.lastName, updatedUser.email, roleId, updatedUser.user_id]);
+            let rs = await client.query(sql, [updatedUser.firstName, updatedUser.lastName, updatedUser.password, updatedUser.email, roleId, updatedUser.user_id]);
+
             return true;
         } catch (e) {
             throw new InternalServerError();
