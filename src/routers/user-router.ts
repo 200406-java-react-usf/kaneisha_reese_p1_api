@@ -41,8 +41,8 @@ UserRouter.get('/:id', async (req, resp) => {
 
 UserRouter.post('', async (req, resp) => {
     try {
-        console.log('made it 1');
-        console.log(req.body.username);
+        
+ 
         let newUser = await userService.addNewUser(req.body);
         console.log('made it 2');
         return resp.status(201).json(newUser);
