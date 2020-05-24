@@ -26,13 +26,13 @@ export function mapReimbResultSet(resultSet: ReimbSchema): Reimb {
     }
 
     return new Reimb(
-        resultSet.id,
+        resultSet.reimb_id,
         resultSet.amount,
         resultSet.submitted,
         resultSet.resolved,
         resultSet.description,
-        resultSet.author_id,
-        resultSet.resolver_id,
+        resultSet.author,
+        resultSet.resolver,
         resultSet.reimb_status,
         resultSet.reimb_type,
     )

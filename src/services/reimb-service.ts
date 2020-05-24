@@ -8,6 +8,7 @@ import {
 } from "../errors/errors";
 import { ReimbRepository } from "../repos/reimb-repo";
 import { Reimb } from "../models/reimb";
+import { User } from "../models/user";
 
 export class ReimbService {
     constructor (private reimbRepo: ReimbRepository){
@@ -53,12 +54,12 @@ export class ReimbService {
         return reimbs;
     }
 
-    async newReimb(updatedReimb: Reimb): Promise<Reimb> {
+    async addReimb(updatedReimb: Reimb, user: User): Promise<Reimb> {
         try {
-            if (!isValidObject(updatedReimb)){
+            if (!isValidObject(updatedReimb) || !isValidObject(user)){
                 throw new BadRequestError();
             }
-             return await this.reimbRepo.save(updatedReimb);
+             return await this.reimbRepo.save(updatedReimb, user);
         } catch (e) {
             throw e;
         }
@@ -75,12 +76,12 @@ export class ReimbService {
         }
     }
 
-    async approveReimb(updatedReimb: Reimb): Promise<boolean> {
+    async approveReimb(updatedReimb: Reimb, user: User): Promise<boolean> {
         try {
             if (!isValidObject(updatedReimb)){
                 throw new BadRequestError();
             }
-             return await this.reimbRepo.update(updatedReimb);
+             return await this.reimbRepo.approve(updatedReimb, user);
         } catch (e) {
             throw e;
         }

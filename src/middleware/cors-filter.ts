@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 
 export function corsFilter(req: Request, resp: Response, next) {
 
-    resp.header('Access-Control-Allow-Origin', '*'); 
+    resp.header('Access-Control-Allow-Origin', `${req.headers.origin}`); 
     resp.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
     resp.header('Access-Control-Allow-Credentials', 'true');
     resp.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');

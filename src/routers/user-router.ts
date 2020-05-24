@@ -40,21 +40,23 @@ UserRouter.get('/:id', async (req, resp) => {
 });
 
 UserRouter.post('', async (req, resp) => {
-
-    console.log('POST REQUEST RECEIVED AT /users');
-    console.log(req.body);
     try {
+        
+ 
         let newUser = await userService.addNewUser(req.body);
+        console.log('made it 2');
         return resp.status(201).json(newUser);
     } catch (e) {
+        console.log('made it 3');
         return resp.status(e.statusCode).json(e);
     }
 
 });
 
 UserRouter.put('', async (req,resp) => {
+
     try{
-        await userService.updateUser(req.body);
+        await userService.updateUser(req.body.u);
         return resp.status(204);
     } catch (e) {
         return resp.status(e.statusCode).json(e);
@@ -64,6 +66,8 @@ UserRouter.put('', async (req,resp) => {
 UserRouter.delete('/:id', async (req,resp) => {
     try{
         let id = +req.params.id
+        console.log(`delete user where id = ${id}`);
+        
         await userService.deleteById(id);
         return resp.status(204);
     }catch (e){
