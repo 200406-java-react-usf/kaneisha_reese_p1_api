@@ -9,13 +9,13 @@ export interface UserSchema {
 }
 
 export interface ReimbSchema {
-    id: number,
+    reimb_id: number,
     amount: number,
     submitted: Date,
     resolved: Date,
     description: string,
-    author_id: string,
-    resolver_id: string,
+    author: string,
+    resolver: string,
     reimb_status: string,
     reimb_type: string
 }
