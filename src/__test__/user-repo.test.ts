@@ -53,26 +53,27 @@ describe('userRepo', () => {
         (mockMapper.mapUserResultSet as jest.Mock).mockClear();
     });
 
-    // test('should resolve to an array of users when getAll retrieves records from data source', async () => {
+    test('should resolve to an array of users when getAll retrieves records from data source', async () => {
         
-    //     // Arrange
-    //     jest.clearAllMocks();
-    //     expect.hasAssertions();
+        // Arrange
+        jest.clearAllMocks();
+        expect.hasAssertions();
 
-    //     let mockUser = new User(1, 'aanderson','password', 'Alex', 'Anderson', 'aanderson@gmail.com', 'employee' );
-    //     (mockMapper.mapUserResultSet as jest.Mock).mockReturnValue(mockUser);
+        let mockUser = new User(1, 'aanderson','password', 'Alex', 'Anderson', 'aanderson@gmail.com', 'employee' );
+        (mockMapper.mapUserResultSet as jest.Mock).mockReturnValue(mockUser);
 
-    //     // Act
-    //     let result = await sut.getAll();
+        // Act
+        let result = await sut.getAll();
 
-    //     // Assert
-    //     expect(result).toBeTruthy();
-    //     expect(result instanceof Array).toBe(true);
-    //     expect(result.length).toBe(1);
-    //     expect(mockConnect).toBeCalledTimes(1);
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result instanceof Array).toBe(true);
+        expect(result.length).toBe(1);
+        expect(mockConnect).toBeCalledTimes(1);
 
-    // });
+    });
 
+    
     // test('should resolve to an empty array when getAll retrieves no records from data source', async () => {
         
     //     // Arrange

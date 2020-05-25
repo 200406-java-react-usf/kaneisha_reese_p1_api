@@ -2,24 +2,26 @@ import url from 'url';
 import express from 'express';
 import AppConfig from '../config/app';
 import { adminGuard } from '../middleware/auth-middleware';
+import { User } from '../models/user';
+import { Reimb } from '../models/reimb';
 
 export const ReimbRouter = express.Router();
 
 const reimbService = AppConfig.reimbService;
 
-ReimbRouter.get('', adminGuard, async (req, resp) =>{
-    console.log('made it here 1');
-    
+ReimbRouter.get('',  async (req, resp) =>{
+
     try {
         let payload = await reimbService.getAllReimbs();
-        console.log('made it here 2');
+
+       // console.log(payload)
         resp.status(200).json(payload);
     } catch (e) {
         resp.status(e.statusCode).json(e);
     }
 });
 
-ReimbRouter.get('/:id', adminGuard, async (req, resp) => {
+ReimbRouter.get('/:id',  async (req, resp) => {
     const id = +req.params.id;
     try {
         let payload = await reimbService.getReimbById(id);
@@ -29,7 +31,9 @@ ReimbRouter.get('/:id', adminGuard, async (req, resp) => {
     }
 });
 
-ReimbRouter.get('/:username', adminGuard, async (req, resp) => {
+ReimbRouter.get('/:username',  async (req, resp) => {
+
+    
     const username = req.params.username;
     try {
         let payload = await reimbService.getReimbsByUser(username);
@@ -39,21 +43,28 @@ ReimbRouter.get('/:username', adminGuard, async (req, resp) => {
     }
 });
 
-ReimbRouter.post('', adminGuard, async (req, resp) =>{
+ReimbRouter.post('',  async (req, resp) =>{
     console.log('POST REQUEST RECIEVED AT /reimbs');
-    console.log(req.body);
+    let newReimb = req.body.newReimb;
+    let user=req.body.user;
 
     try{
-        let newReimb = await reimbService.newReimb(req.body);
+        newReimb = await reimbService.addReimb(newReimb, user);
     }catch (e) {
         return resp.status(e.statusCode).json(e)
     }
 });
 
-
 ReimbRouter.put('', async (req,resp) => {
+    console.log('PUT REQUEST RECIEVED AT /reimbs');
+    let updatedReimb: Reimb = req.body.updatedReimb;
+    let user: User =req.body.manager;
+    console.log(updatedReimb);
+    console.log(user);
+    
+    
     try{
-        await reimbService.updateReimb(req.body);
+        await reimbService.updateReimb(updatedReimb, user);
         return resp.status(204);
     } catch (e) {
         return resp.status(e.statusCode).json(e);

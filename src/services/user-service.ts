@@ -24,7 +24,7 @@ export class UserService {
             throw new ResourceNotFoundError();
         }
 
-        return users.map(this.removePassword);
+        return users;
 
     }
 
@@ -42,7 +42,7 @@ export class UserService {
             throw new ResourceNotFoundError();
         }
 
-        return this.removePassword(user);
+        return user;
 
     }
 
@@ -77,7 +77,7 @@ export class UserService {
                 throw new ResourceNotFoundError();
             }
 
-            return this.removePassword(user);
+            return user;
 
         } catch (e) {
             throw e;
@@ -100,7 +100,7 @@ export class UserService {
             if (isEmptyObject(authUser)) {
                 throw new AuthenticationError('Bad credentials provided.');
             }
-            return this.removePassword(authUser);
+            return authUser;
 
         } catch (e) {
             throw e;
@@ -109,9 +109,10 @@ export class UserService {
     }
 
     async addNewUser(newUser: User): Promise<User> {
-        
+        console.log(newUser)
         try {
 
+            console.log('made it 4');
             if (!isValidObject(newUser, 'id')) {
                 throw new BadRequestError('Invalid property values found in provided user.');
             }
@@ -128,10 +129,10 @@ export class UserService {
                 throw new  ResourcePersistenceError('The provided email is already taken.');
             }
 
-            newUser.role = 'User'; // all new registers have 'User' role by default
+            console.log('made it 5');
             const persistedUser = await this.userRepo.save(newUser);
-
-            return this.removePassword(persistedUser);
+            console.log('made it 6');
+            return persistedUser;
 
         } catch (e) {
             throw e
@@ -140,7 +141,7 @@ export class UserService {
     }
 
     async updateUser(updatedUser: User): Promise<boolean> {
-        
+        console.log('made it to service')
         try {
 
             if (!isValidObject(updatedUser)) {
@@ -161,6 +162,8 @@ export class UserService {
             if (!isValidId(id)) {
                 throw new BadRequestError();
             }
+            console.log(`made it to delete in service id = ${id}`);
+            
             return await this.userRepo.deleteById(id);
         } catch (e) {
             throw e;
@@ -195,11 +198,5 @@ export class UserService {
         return false;
     }
 
-    private removePassword(user: User): User {
-        if(!user || !user.password) return user;
-        let usr = {...user};
-        delete usr.password;
-        return usr;   
-    }
 
 }

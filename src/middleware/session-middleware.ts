@@ -6,7 +6,8 @@ const sessionConfig = {
         secure: false
     },
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+
 }
 
 export const sessionMiddleware = session(sessionConfig);

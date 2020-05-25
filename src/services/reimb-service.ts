@@ -4,21 +4,25 @@ import {
     ResourceNotFoundError, 
     NotImplementedError, 
     ResourcePersistenceError, 
-    AuthenticationError 
+    AuthenticationError, 
+    AuthorizationError
 } from "../errors/errors";
 import { ReimbRepository } from "../repos/reimb-repo";
 import { Reimb } from "../models/reimb";
+import { User } from "../models/user";
 
 export class ReimbService {
     constructor (private reimbRepo: ReimbRepository){
         this.reimbRepo = reimbRepo;
     }
 
+    /**
+     * Get all reimbs 
+     */
     async getAllReimbs(): Promise<Reimb[]> {
-        console.log('made it here 3');
+
         let reimbs = await this.reimbRepo.getAll();
 
-        console.log('made it here 4');
         if (reimbs.length == 0) {
             throw new ResourceNotFoundError();
         }
@@ -53,34 +57,42 @@ export class ReimbService {
         return reimbs;
     }
 
-    async newReimb(updatedReimb: Reimb): Promise<Reimb> {
+    async addReimb(newReimb: Reimb, user: User): Promise<Reimb> {
+
         try {
-            if (!isValidObject(updatedReimb)){
+            if (!isValidObject(newReimb) || !isValidObject(user)){
                 throw new BadRequestError();
             }
-             return await this.reimbRepo.save(updatedReimb);
+            
+             return await this.reimbRepo.save(newReimb, user);
         } catch (e) {
             throw e;
         }
     }
 
-    async updateReimb(updatedReimb: Reimb): Promise<boolean> {
+    async updateReimb(updatedReimb: Reimb, user: User): Promise<boolean> {
         try {
-            if (!isValidObject(updatedReimb)){
+            console.log(updatedReimb);
+            console.log(user.role);
+            if (!isValidObject(user) ){
+                console.log('throw error')
                 throw new BadRequestError();
             }
-             return await this.reimbRepo.update(updatedReimb);
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    async approveReimb(updatedReimb: Reimb): Promise<boolean> {
-        try {
-            if (!isValidObject(updatedReimb)){
-                throw new BadRequestError();
+            if(updatedReimb.author===user.username){
+                return await this.reimbRepo.update(updatedReimb, user)
             }
-             return await this.reimbRepo.update(updatedReimb);
+            else if (user.role==='manager'){
+                return await this.reimbRepo.approve(updatedReimb, user)
+            } else {
+                throw new AuthorizationError;
+            }
+                
+                
+            // } else {
+            //     console.log('update');
+                
+            //     return await this.reimbRepo.update(updatedReimb,user);
+            // }
         } catch (e) {
             throw e;
         }
